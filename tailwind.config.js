@@ -12,7 +12,7 @@ export default {
       colors: {
         'azul-texto': '#3B97BC',
         'azul-logo': '#3CACDD',
-        'roxao': '#6D28D9'
+        'roxao': '#6D28D9',
       },
     },
   },
