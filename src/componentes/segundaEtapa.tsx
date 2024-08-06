@@ -11,11 +11,14 @@ interface SegundaEtapaProps {
     isIconeHover: boolean,
     tirarHoverIcone: () => void,
     colocarHoverIcone: () => void,
-    voltarEtapa: (etapa:number) => void
+    voltarEtapa: (etapa:number) => void,
+    avancarEtapa: (etapa:number) => void,
+    qualTipoArquivoSelecionado: string
+
 }
 
 
-export function SegundaEtapa ({ file, etapa, dropzone, isIconeHover, tirarHoverIcone, colocarHoverIcone, voltarEtapa }: SegundaEtapaProps) {
+export function SegundaEtapa ({ file, etapa, dropzone, isIconeHover, tirarHoverIcone, colocarHoverIcone, voltarEtapa, avancarEtapa, qualTipoArquivoSelecionado }: SegundaEtapaProps) {
     const { getRootProps, getInputProps, isDragActive } = dropzone;
 
     return (
@@ -33,7 +36,11 @@ export function SegundaEtapa ({ file, etapa, dropzone, isIconeHover, tirarHoverI
           {/* indicação da conversão do tipo de arquivo escolhido */}
           <div className='flex items-center gap-4 justify-center'>
 
+          {qualTipoArquivoSelecionado === 'PDF' ? (
             <div className='px-4 py-1.5 rounded-lg bg-gradient-to-r from-azul-logo to-roxao border-none text-white font-semibold text-base'>PDF (Padrão leitura)</div>
+          ) : (
+            <div className='px-4 py-1.5 rounded-lg bg-gradient-to-r from-azul-logo to-roxao border-none text-white font-semibold text-base'>CSV (Separado por vírgula)</div>
+          )}
             <Shuffle className="size-6 text-azulao" />
             <span className="text-roxao font-extrabold text-2xl">OFX</span>
 
@@ -116,7 +123,7 @@ export function SegundaEtapa ({ file, etapa, dropzone, isIconeHover, tirarHoverI
         <div className="flex justify-between items-center">
 
             <button onClick={() => voltarEtapa(etapa)} className='flex items-center px-4 py-1.5 rounded-lg bg-azul-logo gap-2 text-white font-semibold text-base hover:bg-blue-500 hover:text-white'>Voltar <Undo2 className="text-white size-4"/> </button>
-            <button className='flex items-center gap-2 px-4 py-1.5 rounded-lg bg-roxao text-white font-semibold text-base hover:bg-purple-800'>Converter <MoveRight className="text-white size-4" /> </button>
+            <button onClick={() => avancarEtapa(etapa)} className='flex items-center gap-2 px-4 py-1.5 rounded-lg bg-roxao text-white font-semibold text-base hover:bg-purple-800'>Converter <MoveRight className="text-white size-4" /> </button>
             </div>
 
         {/* fim botões de voltar e converter*/}

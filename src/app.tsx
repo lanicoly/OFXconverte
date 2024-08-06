@@ -1,8 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useDropzone } from 'react-dropzone';
 import { Menu } from "./componentes/menu";
 import { PrimeiraEtapa } from "./componentes/primeiraEtapa";
 import { SegundaEtapa } from "./componentes/segundaEtapa";
+import { TerceiraEtapa } from "./componentes/terceiraEtapa";
+import { QuartaEtapa } from "./componentes/quartaEtapa";
 
 
 export function App() {
@@ -15,6 +17,8 @@ export function App() {
 
   const [file, setFile] = useState<File | null>(null); //essa parte indica que meu estado guarda ou nenhum ou 1 arquivo do tipo File
 
+  const [qualTipoArquivoSelecionado, setQualTipoArquivoSelecionado] = useState('PDF');
+
   const onDrop = useCallback((files: File[]) => {
     setFile(files[0]); //nessa parte, estamos indicando que não será colocando um arquivo atrás do outro, mas sim que o arquivo selecionado vai ser o único que constará em 'files'
   }, []);
@@ -25,10 +29,11 @@ export function App() {
 
   const dropzone = useDropzone({
     onDrop,
-    accept: {
-      'application/pdf': ['.pdf'] //tipo de arquivo aceito no momento: PDF 
-    },
     
+    accept: qualTipoArquivoSelecionado === 'PDF'
+    ? { 'application/pdf': ['.pdf'] }
+    : { 'application/csv': ['.csv'] },
+
     noClick: true, // esse noClick impede que o clique na area de dropzone abra o explorador de arquivos
     noKeyboard: true, // esse noKeyboard impede que o teclado possa abrir o explorador de arquivos
   });
@@ -51,10 +56,22 @@ export function App() {
     }
   }
 
+  function avancarEtapa() {
+    if (etapa < 4) { //não há um botão de voltar na etapa 1, mas é feita essa verificação a fim de desencargo de consciência
+      console.log("Avançando etapa...");
+      selecionarEtapa(etapa + 1);
+    }
+  }
+
   //essa função recebe como parâmetro o id do item selecionado por clique e muda o id guardado em "qualItemMenuSelecionado" para ele
   function selecionarItemMenu(itemId: string) {
     setQualItemMenuSelecionado(itemId);
   };
+
+  function selecionarTipoArquivo(tipo: 'PDF' | 'CSV') {
+    setQualTipoArquivoSelecionado(tipo);
+    console.log(`Tipo de arquivo selecionado: ${tipo}`)
+  }
 
   //aqui ele vai reagir para a estrutura toda do botao se somente o botão já estiver hover ou nao no caso do false
   function colocarHoverIcone() {
@@ -78,6 +95,8 @@ export function App() {
           tirarHoverIcone={tirarHoverIcone}
           colocarHoverIcone={colocarHoverIcone}
           selecionarEtapa={selecionarEtapa}
+          selecionarTipoArquivo={selecionarTipoArquivo}
+          qualTipoArquivoSelecionado={qualTipoArquivoSelecionado}
 
         />
       );
@@ -92,9 +111,33 @@ export function App() {
           tirarHoverIcone={tirarHoverIcone}
           colocarHoverIcone={colocarHoverIcone}
           voltarEtapa={voltarEtapa}
+          qualTipoArquivoSelecionado={qualTipoArquivoSelecionado}
+          avancarEtapa={avancarEtapa}
+
         />
       );
       break;
+    case 3:
+      etapaComponent = (
+        <TerceiraEtapa
+        file={file}
+        etapa={etapa}
+        voltarEtapa={voltarEtapa}
+        avancarEtapa={avancarEtapa}
+
+        />
+      );
+      break;
+    case 4:
+      etapaComponent = (
+        <QuartaEtapa
+          etapa={etapa}
+          selecionarEtapa={selecionarEtapa}
+          removeFile={removeFile}
+          
+        />
+      );
+      break
     default:
       etapaComponent = null;
   }

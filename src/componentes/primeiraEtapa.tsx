@@ -11,10 +11,12 @@ interface PrimeiraEtapaProps {
     isIconeHover: boolean,
     tirarHoverIcone: () => void,
     colocarHoverIcone: () => void,
-    selecionarEtapa: (etapa:number) => void
+    selecionarEtapa: (etapa:number) => void,
+    selecionarTipoArquivo: (tipo: 'PDF' | 'CSV') => void,
+    qualTipoArquivoSelecionado: string
 }
   
-export function PrimeiraEtapa({file, selecionarEtapa, etapa, dropzone, isIconeHover, tirarHoverIcone, colocarHoverIcone} : PrimeiraEtapaProps) {
+export function PrimeiraEtapa({file, selecionarEtapa, etapa, dropzone, isIconeHover, tirarHoverIcone, colocarHoverIcone, selecionarTipoArquivo, qualTipoArquivoSelecionado} : PrimeiraEtapaProps) {
 
     useEffect(() => {
       if (file) {
@@ -42,10 +44,20 @@ export function PrimeiraEtapa({file, selecionarEtapa, etapa, dropzone, isIconeHo
           {/* botoes */}
           <div className='flex items-center gap-4 py-2 justify-center'>
 
-            <button className='px-4 py-1.5 rounded-lg bg-rose-100 border-rose-700 border-2 text-rose-700 font-semibold text-sm hover:border-none hover:bg-rose-700 hover:text-white'>PDF (Padrão leitura)</button>
+            {qualTipoArquivoSelecionado === 'PDF' ? (
+              <>
+              <button className='px-4 py-1.5 rounded-lg font-semibold text-sm border-rose-800 border-2 bg-rose-700 text-white'>PDF (Padrão leitura)</button>
 
-            <button className='px-4 py-1.5 rounded-lg bg-green-100 border-green-700 border-2 text-green-700 font-semibold text-sm hover:border-none hover:bg-green-600 hover:text-white'>CSV (Separado por vírgula)</button>
+              <button onClick={() => selecionarTipoArquivo('CSV')} className='px-4 py-1.5 rounded-lg bg-green-100 border-green-700 border-2 text-green-700 font-semibold text-sm hover:bg-green-600 hover:text-white'>CSV (Separado por vírgula)</button>
+              </>
+            ) : (
+              <>
+              <button onClick={() => selecionarTipoArquivo('PDF')} className='px-4 py-1.5 rounded-lg bg-rose-100 border-rose-800 border-2 text-rose-700 font-semibold text-sm hover:bg-rose-700 hover:text-white'>PDF (Padrão leitura)</button>
 
+              <button className='px-4 py-1.5 rounded-lg  font-semibold text-sm border-green-700 border-2 bg-green-600 text-white'>CSV (Separado por vírgula)</button>
+              </>
+            )
+            }
           </div>
           {/* fim botoes */}
 

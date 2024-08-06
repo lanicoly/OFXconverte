@@ -53,7 +53,7 @@ export function PassoAPasso({ etapa }: PassoAPassoProps) {
             <div className="h-[2px] w-32 bg-azulao"></div>
             <FileSave color="#0078a7" size={36} />
             <div className="h-[2px] w-32 bg-azulao"></div>
-            <Celebration color="#0078a7" size={36} />
+            <Celebration color="#6d28d9" size={36} />
           </div>
           )
   }
