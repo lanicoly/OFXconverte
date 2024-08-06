@@ -2,21 +2,31 @@ import { CopyPlus } from "lucide-react";
 import { AddNotes } from "./icons/addNotes";
 import { PassoAPasso } from "./passo-a-passo";
 import { DropzoneState } from "react-dropzone";
+import { useEffect } from "react";
 
 interface PrimeiraEtapaProps {
+    file?: File | null,
     etapa:number,
     dropzone: DropzoneState,
     isIconeHover: boolean,
     tirarHoverIcone: () => void,
-    colocarHoverIcone: () => void
+    colocarHoverIcone: () => void,
+    selecionarEtapa: (etapa:number) => void
 }
+  
+export function PrimeiraEtapa({file, selecionarEtapa, etapa, dropzone, isIconeHover, tirarHoverIcone, colocarHoverIcone} : PrimeiraEtapaProps) {
 
-export function PrimeiraEtapa({etapa, dropzone, isIconeHover, tirarHoverIcone, colocarHoverIcone} : PrimeiraEtapaProps) {
+    useEffect(() => {
+      if (file) {
+        selecionarEtapa(2);
+      }
+    }, [file]);
+
     const { getRootProps, getInputProps, isDragActive } = dropzone;
 
     return (
         
-        <div className='bg-white w-[1040px] m-auto rounded-xl py-6 px-6 gap-3 shadow-shape'>
+        <div className='bg-white w-[1040px] m-auto rounded-xl py-6 px-6 gap-3 shadow-shape transition-all'>
 
         {/* cabeçalho da área de conversão */}
         <div className="w-full space-y-3 px-2.5 py-2.5">

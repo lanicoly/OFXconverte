@@ -3,31 +3,23 @@ import { PassoAPasso } from "./passo-a-passo";
 import { Description } from "./icons/description";
 import { SourceNotes } from "./icons/source-notes";
 import { DropzoneState } from "react-dropzone";
-import { useEffect } from "react";
 
 interface SegundaEtapaProps {
-    file?: File,
+    file?: File | null,
     etapa:number,
     dropzone: DropzoneState,
     isIconeHover: boolean,
     tirarHoverIcone: () => void,
     colocarHoverIcone: () => void,
-    selecionarEtapa: (etapa:number) => void,
-    removeFile: () => void
+    voltarEtapa: (etapa:number) => void
 }
 
 
-export function SegundaEtapa ({ file, etapa, dropzone, isIconeHover, tirarHoverIcone, colocarHoverIcone, selecionarEtapa, removeFile }: SegundaEtapaProps) {
+export function SegundaEtapa ({ file, etapa, dropzone, isIconeHover, tirarHoverIcone, colocarHoverIcone, voltarEtapa }: SegundaEtapaProps) {
     const { getRootProps, getInputProps, isDragActive } = dropzone;
 
-
-    //definindo a etapa 2 só uma vez
-    useEffect(() => {
-        selecionarEtapa(2);
-    }, [selecionarEtapa]);
-
     return (
-      <div className='bg-white w-[1040px] m-auto rounded-xl py-6 px-12 space-y-4 shadow-shape'>
+      <div className='bg-white w-[1040px] m-auto rounded-xl py-6 px-12 space-y-4 shadow-shape transition-all'>
 
         {/* cabeçalho da área de conversão */}
         <div className="w-full space-y-4 px-2.5 py-2.5">
@@ -123,7 +115,7 @@ export function SegundaEtapa ({ file, etapa, dropzone, isIconeHover, tirarHoverI
         {/* botões de voltar e converter*/}
         <div className="flex justify-between items-center">
 
-            <button onClick={() => removeFile()} className='flex items-center px-4 py-1.5 rounded-lg bg-azul-logo gap-2 text-white font-semibold text-base hover:bg-blue-500 hover:text-white'>Voltar <Undo2 className="text-white size-4"/> </button>
+            <button onClick={() => voltarEtapa(etapa)} className='flex items-center px-4 py-1.5 rounded-lg bg-azul-logo gap-2 text-white font-semibold text-base hover:bg-blue-500 hover:text-white'>Voltar <Undo2 className="text-white size-4"/> </button>
             <button className='flex items-center gap-2 px-4 py-1.5 rounded-lg bg-roxao text-white font-semibold text-base hover:bg-purple-800'>Converter <MoveRight className="text-white size-4" /> </button>
             </div>
 

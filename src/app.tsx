@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from 'react-dropzone';
 import { Menu } from "./componentes/menu";
 import { PrimeiraEtapa } from "./componentes/primeiraEtapa";
@@ -36,22 +36,20 @@ export function App() {
   // função que vai mudar a etapa para que seja exibido conforme a que for selecionada
   function selecionarEtapa(etapa: number) {
     setEtapa(etapa);
+    console.log(`Etapa modificada para: ${etapa}`);
   }
 
-  // function voltarEtapa(etapa: number) {
-  //   selecionarEtapa(etapa - 1);
-  //   console.log("Voltando etapa...")
-  //   console.log(etapa)
-
-  //   if (etapa === 1) {
-  //     removeFile()
-  //     console.log("Removendo File...")
-
-  //   }
-
-  //   return etapa
-  // }
-
+  // essa função auxilia a exibição correta dos componentes de cada etapa, garantindo a navegação correta alinhada com o passo a passo
+  function voltarEtapa() {
+    if (etapa === 2) { //caso esteja voltando da etapa 2 para 1, o arquivo é removido, pois na primeira etapa não há arquivo
+      removeFile();
+      console.log("Removendo File...");
+    } 
+    if (etapa > 1) { //não há um botão de voltar na etapa 1, mas é feita essa verificação a fim de desencargo de consciência
+      console.log("Voltando etapa...");
+      selecionarEtapa(etapa - 1);
+    }
+  }
 
   //essa função recebe como parâmetro o id do item selecionado por clique e muda o id guardado em "qualItemMenuSelecionado" para ele
   function selecionarItemMenu(itemId: string) {
@@ -65,6 +63,40 @@ export function App() {
 
   function tirarHoverIcone() {
     setIsIconeHover(false);
+  }
+
+  // essa variável foi criada para que os componentes das etapas sejam exibidos conforme a etapa atual e não se houver file ou não (como era anteriormente nos primeiros testes)
+  let etapaComponent;
+  switch (etapa) {
+    case 1:
+      etapaComponent = (
+        <PrimeiraEtapa
+          file={file}
+          etapa={etapa}
+          dropzone={dropzone}
+          isIconeHover={isIconeHover}
+          tirarHoverIcone={tirarHoverIcone}
+          colocarHoverIcone={colocarHoverIcone}
+          selecionarEtapa={selecionarEtapa}
+
+        />
+      );
+      break;
+    case 2:
+      etapaComponent = (
+        <SegundaEtapa
+          file={file}
+          dropzone={dropzone}
+          etapa={etapa}
+          isIconeHover={isIconeHover}
+          tirarHoverIcone={tirarHoverIcone}
+          colocarHoverIcone={colocarHoverIcone}
+          voltarEtapa={voltarEtapa}
+        />
+      );
+      break;
+    default:
+      etapaComponent = null;
   }
 
   //aqui temos todos os itens âncora do menu, aonde o link será usado para navegar e o label será o texto escrito nele
@@ -89,26 +121,7 @@ export function App() {
         {/* essa cor 'azulao' é uma cor específica que criei para se adequar ao protótipo */}
         <p className="text-azulao font-medium text-2xl">Sua ferramenta de conversão <strong className="text-roxao font-bold">OFX</strong> favorita</p>
 
-
-        {/* se tiver um arquivo na lista, vai para a etapa 2, se não, fica na etapa 1 */}
-        {file ? <SegundaEtapa
-          file={file}
-          dropzone={dropzone}
-          etapa={etapa}
-          isIconeHover={isIconeHover}
-          tirarHoverIcone={tirarHoverIcone}
-          colocarHoverIcone={colocarHoverIcone}
-          selecionarEtapa={selecionarEtapa}
-          removeFile={removeFile}
-        /> :
-          <PrimeiraEtapa
-            etapa={etapa}
-            dropzone={dropzone}
-            isIconeHover={isIconeHover}
-            tirarHoverIcone={tirarHoverIcone}
-            colocarHoverIcone={colocarHoverIcone}
-          />
-        }
+        {etapaComponent}
 
       </div>
       {/* fim main */}
