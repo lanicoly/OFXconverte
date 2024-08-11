@@ -8,6 +8,7 @@ import { QuartaEtapa } from "./componentes/quartaEtapa";
 import { FileEdit } from "./componentes/icons/fileEdit";
 import { FileSave } from "./componentes/icons/fileSave";
 import { Celebration } from "./componentes/icons/celebration";
+import { EnviarArquivo, baixarOFX} from "./service.jsx"
 
 
 
@@ -20,8 +21,41 @@ export function App() {
   const [isIconeHover, setIsIconeHover] = useState(false); //fiz esse estado para identificar se o mouse passou em cima ou nao do botão
 
   const [file, setFile] = useState<File | null>(null); //essa parte indica que meu estado guarda ou nenhum ou 1 arquivo do tipo File
-
+  const [conteudotabela, setconteudotabela]  = useState<any | null>(null)
   const [qualTipoArquivoSelecionado, setQualTipoArquivoSelecionado] = useState('PDF');
+  const [isloading, setisloading] = useState(false)
+
+  const ConverterArquivo = async () => {
+    if (file) {
+        try {
+           setisloading(true)
+           const arquivoconvertido = await EnviarArquivo(file);
+           setconteudotabela(arquivoconvertido)
+            console.log(arquivoconvertido); //retorno da api um json com todas as informaçoes contem as informaçoes para povoar a tabela
+        } catch (error) {
+            console.error("Erro ao enviar o arquivo:", error);
+        }
+    }
+};
+
+  const DownloadArquivo =  async  ()=>{
+    let nome_pdf = file?.name;
+    if (nome_pdf) {
+      const nomeSemExtensao = nome_pdf.split('.').slice(0, -1).join('.');
+      console.log(nomeSemExtensao);
+      try {
+        await baixarOFX(conteudotabela,nomeSemExtensao);
+      } catch (error) {
+        console.error("Erro ao baixar o arquivo:", error);
+      }
+    }
+
+  }
+
+  if(isloading){
+    console.log("carregando pdf")
+
+  }
 
   const onDrop = useCallback((files: File[]) => {
     setFile(files[0]); //nessa parte, estamos indicando que não será colocando um arquivo atrás do outro, mas sim que o arquivo selecionado vai ser o único que constará em 'files'
@@ -112,11 +146,13 @@ export function App() {
           dropzone={dropzone}
           etapa={etapa}
           isIconeHover={isIconeHover}
+          isloading = {isloading}
           tirarHoverIcone={tirarHoverIcone}
           colocarHoverIcone={colocarHoverIcone}
           voltarEtapa={voltarEtapa}
           qualTipoArquivoSelecionado={qualTipoArquivoSelecionado}
           avancarEtapa={avancarEtapa}
+          functionconverter={ConverterArquivo}
 
         />
       );
@@ -128,6 +164,8 @@ export function App() {
         etapa={etapa}
         voltarEtapa={voltarEtapa}
         avancarEtapa={avancarEtapa}
+        conteudotabela={conteudotabela}
+        downloadarquivo={DownloadArquivo}
 
         />
       );
