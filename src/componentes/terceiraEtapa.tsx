@@ -5,11 +5,19 @@ interface TerceiraEtapaProps {
     etapa: number,
     file?: File | null,
     voltarEtapa: (etapa:number) => void,
-    avancarEtapa: (etapa:number) => void
+    avancarEtapa: (etapa:number) => void,
+    conteudotabela: any,
+    downloadarquivo: () => void
 
 }
 
-export function TerceiraEtapa ({ etapa, file, voltarEtapa, avancarEtapa} : TerceiraEtapaProps) {
+export function TerceiraEtapa ({ etapa, file, voltarEtapa, avancarEtapa, conteudotabela, downloadarquivo} : TerceiraEtapaProps) {
+
+    async function baixarArquivo(){
+        await downloadarquivo()
+        avancarEtapa(etapa)
+
+    }
     return (
         <div className='bg-white w-[1040px] m-auto rounded-xl py-6 px-6 gap-3 shadow-shape transition-all'>
 
@@ -37,7 +45,17 @@ export function TerceiraEtapa ({ etapa, file, voltarEtapa, avancarEtapa} : Terce
 
         {/* parte de visualização do arquivo já convertido*/}
         <div className={"w-full flex flex-col items-center justify-center py-6 px-4 gap-4 rounded-xl border-[3px] border-solid border-blue-200 bg-sky-50"}>
-          tabela
+        <ul className="w-full">
+        {conteudotabela.map((transacao, index) => (
+            <li key={index} className="py-2 px-4 border-b border-gray-300">
+                <div><strong>FITID:</strong> {transacao.FITID}</div>
+                <div><strong>Amount:</strong> {transacao.amount}</div>
+                <div><strong>Date:</strong> {transacao.date}</div>
+                <div><strong>Description:</strong> {transacao.description}</div>
+                <div><strong>Type:</strong> {transacao.type}</div>
+            </li>
+        ))}
+    </ul>
           
         </div>
         {/* fim parte de visualização de arquivo já convertido*/}
@@ -47,7 +65,7 @@ export function TerceiraEtapa ({ etapa, file, voltarEtapa, avancarEtapa} : Terce
           
             tabelinha estatisticas
             <h2 className="text-azulao font-semibold text-xl">{file?.name}</h2>
-            <button className='flex items-center gap-2 px-4 py-1.5 rounded-lg bg-roxao text-white font-semibold text-base hover:bg-purple-800'>Baixar arquivo <Download className="text-white size-4" /> </button>
+            <button onClick={()=> baixarArquivo()} className='flex items-center gap-2 px-4 py-1.5 rounded-lg bg-roxao text-white font-semibold text-base hover:bg-purple-800'>Baixar arquivo <Download className="text-white size-4" /> </button>
 
         </div>
         {/* fim parte de estatística e download*/}

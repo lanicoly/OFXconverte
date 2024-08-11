@@ -4,6 +4,8 @@ import { Description } from "./icons/description";
 import { SourceNotes } from "./icons/source-notes";
 import { DropzoneState } from "react-dropzone";
 
+
+
 interface SegundaEtapaProps {
     file?: File | null,
     etapa:number,
@@ -13,13 +15,22 @@ interface SegundaEtapaProps {
     colocarHoverIcone: () => void,
     voltarEtapa: (etapa:number) => void,
     avancarEtapa: (etapa:number) => void,
-    qualTipoArquivoSelecionado: string
+    qualTipoArquivoSelecionado: string,
+    functionconverter: ()=> void,
+    isloading: boolean
 
 }
 
 
-export function SegundaEtapa ({ file, etapa, dropzone, isIconeHover, tirarHoverIcone, colocarHoverIcone, voltarEtapa, avancarEtapa, qualTipoArquivoSelecionado }: SegundaEtapaProps) {
+export function SegundaEtapa ({ file, etapa, dropzone, isIconeHover,isloading, tirarHoverIcone, colocarHoverIcone, voltarEtapa, avancarEtapa, qualTipoArquivoSelecionado, functionconverter}: SegundaEtapaProps) {
     const { getRootProps, getInputProps, isDragActive } = dropzone;
+    const conversaoarquiv = async () =>{
+          await functionconverter()
+          isloading = false
+          
+          avancarEtapa(etapa)
+
+    }
 
     return (
       <div className='bg-white w-[1040px] m-auto rounded-xl py-6 px-12 space-y-4 shadow-shape transition-all'>
@@ -123,7 +134,7 @@ export function SegundaEtapa ({ file, etapa, dropzone, isIconeHover, tirarHoverI
         <div className="flex justify-between items-center">
 
             <button onClick={() => voltarEtapa(etapa)} className='flex items-center px-4 py-1.5 rounded-lg bg-azul-logo gap-2 text-white font-semibold text-base hover:bg-blue-500 hover:text-white'>Voltar <Undo2 className="text-white size-4"/> </button>
-            <button onClick={() => avancarEtapa(etapa)} className='flex items-center gap-2 px-4 py-1.5 rounded-lg bg-roxao text-white font-semibold text-base hover:bg-purple-800'>Converter <MoveRight className="text-white size-4" /> </button>
+            <button onClick={() =>conversaoarquiv()} className='flex items-center gap-2 px-4 py-1.5 rounded-lg bg-roxao text-white font-semibold text-base hover:bg-purple-800'>Converter <MoveRight className="text-white size-4" /> </button>
             </div>
 
         {/* fim botões de voltar e converter*/}
