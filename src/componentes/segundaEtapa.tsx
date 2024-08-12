@@ -24,6 +24,7 @@ interface SegundaEtapaProps {
 
 export function SegundaEtapa ({ file, etapa, dropzone, isIconeHover,isloading, tirarHoverIcone, colocarHoverIcone, voltarEtapa, avancarEtapa, qualTipoArquivoSelecionado, functionconverter}: SegundaEtapaProps) {
     const { getRootProps, getInputProps, isDragActive } = dropzone;
+    
     const conversaoarquiv = async () =>{
           await functionconverter()
           isloading = false
