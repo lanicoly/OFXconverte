@@ -3,6 +3,7 @@ import { PassoAPasso } from "./passo-a-passo";
 import { Description } from "./icons/description";
 import { SourceNotes } from "./icons/source-notes";
 import { DropzoneState } from "react-dropzone";
+import { useState } from "react";
 
 
 
@@ -17,21 +18,34 @@ interface SegundaEtapaProps {
     avancarEtapa: (etapa:number) => void,
     qualTipoArquivoSelecionado: string,
     functionconverter: ()=> void,
-    isloading: boolean
+    finalizarLoading: () => void,
+    inserirAgencia: (agencia:string) => void,
+    inserirConta: (conta:string) => void
 
 }
 
 
-export function SegundaEtapa ({ file, etapa, dropzone, isIconeHover,isloading, tirarHoverIcone, colocarHoverIcone, voltarEtapa, avancarEtapa, qualTipoArquivoSelecionado, functionconverter}: SegundaEtapaProps) {
+export function SegundaEtapa ({ file, etapa, dropzone, isIconeHover,finalizarLoading, tirarHoverIcone, colocarHoverIcone, voltarEtapa, avancarEtapa, qualTipoArquivoSelecionado, functionconverter, inserirAgencia, inserirConta}: SegundaEtapaProps) {
     const { getRootProps, getInputProps, isDragActive } = dropzone;
-    
+    const [agencia, setAgencia] = useState<string>('');
+    const [conta, setConta] = useState<string>('');
+
     const conversaoarquiv = async () =>{
           await functionconverter()
-          isloading = false
-          
+          console.log("Conversao concluida!")
+          finalizarLoading()
+          inserirAgencia(agencia)
+          inserirConta(conta)
           avancarEtapa(etapa)
-
     }
+
+    const handleAgenciaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setAgencia(event.target.value);
+  };
+
+  const handleContaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setConta(event.target.value);
+  };
 
     return (
       <div className='bg-white w-[1040px] m-auto rounded-xl py-6 px-12 space-y-4 shadow-shape transition-all'>
@@ -67,6 +81,27 @@ export function SegundaEtapa ({ file, etapa, dropzone, isIconeHover,isloading, t
 
         {/* conteudo central visualização + substituição */}
         <div className="flex gap-4">
+
+          {/* form que pega agencia e conta do usuario */}
+        <form action="submit">
+
+        <fieldset className={"w-full h-full flex flex-col items-center py-6 px-4 gap-4 rounded-xl border-[3px] border-solid border-blue-200 bg-sky-50"}>
+          <p className='text-azulao font-medium text-base'>Informe sua agência e conta para prosseguir com a conversão.</p>
+          
+          {/* eu poderia fazer uma validação para garantir o envio adequado desse dado */}
+          <div className="flex flex-col gap-1 justify-center">
+              <label className="text-base text-roxao font-medium text-left" htmlFor="agencia">Agência</label>
+              <input value={agencia} onChange={handleAgenciaChange} className="placeholder-violet-600 text-sm border-2 border-solid border-roxao px-2 py-1 rounded-md" type="text" name="agencia" id="agencia" placeholder="Informe sua agência"/>
+          </div>
+          <div className="flex flex-col gap-1 justify-center">
+              <label className="text-base text-roxao font-medium text-left" htmlFor="conta">Conta</label>
+              <input value={conta} onChange={handleContaChange} className="placeholder-violet-600 text-sm border-2 border-solid border-roxao px-2 py-1 rounded-md" type="text" name="conta" id="conta" placeholder="Informe sua conta"/>
+          </div>
+
+        </fieldset>
+        </form>
+        {/* fim form que pega agencia e conta do usuario */}
+
 
         {/* parte de visualização do arquivo */}
         <div className={"w-full flex flex-col items-center justify-center py-6 px-4 gap-4 rounded-xl border-[3px] border-solid border-blue-200 bg-sky-50"}>

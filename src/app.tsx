@@ -8,6 +8,7 @@ import { QuartaEtapa } from "./componentes/quartaEtapa";
 import { EnviarArquivo, baixarOFX } from "./service.jsx";
 import { ConceitoOFX } from "./componentes/conceitoOFX.js";
 import { TutorialConversao } from "./componentes/tutorialConversao";
+import { Loading } from "./componentes/loading.js";
 
 
 
@@ -23,6 +24,17 @@ export function App() {
   const [conteudotabela, setconteudotabela]  = useState<any | null>(null)
   const [qualTipoArquivoSelecionado, setQualTipoArquivoSelecionado] = useState('PDF');
   const [isloading, setisloading] = useState(false)
+  const [agenciaUsuario, setAgencia] = useState('') //valor da agencia inserida
+  const [contaUsuario, setConta] = useState('') //valor da conta inserida
+
+  function inserirAgencia (agencia:string) {
+    setAgencia(agencia)
+  }
+
+  function inserirConta (conta:string) {
+    setConta(conta)
+  }
+
 
   const ConverterArquivo = async () => {
     if (file) {
@@ -55,6 +67,10 @@ export function App() {
     console.log("carregando pdf")
 
   }
+
+function finalizarLoading() {
+  setisloading(false)
+}
 
 const mudarConteudoTabela = (newList: any[]) => {
   setconteudotabela(newList);
@@ -149,13 +165,15 @@ const mudarConteudoTabela = (newList: any[]) => {
           dropzone={dropzone}
           etapa={etapa}
           isIconeHover={isIconeHover}
-          isloading = {isloading}
+          finalizarLoading = {finalizarLoading}
           tirarHoverIcone={tirarHoverIcone}
           colocarHoverIcone={colocarHoverIcone}
           voltarEtapa={voltarEtapa}
           qualTipoArquivoSelecionado={qualTipoArquivoSelecionado}
           avancarEtapa={avancarEtapa}
           functionconverter={ConverterArquivo}
+          inserirAgencia={inserirAgencia}
+          inserirConta={inserirConta}
 
         />
       );
@@ -173,6 +191,7 @@ const mudarConteudoTabela = (newList: any[]) => {
 
         />
       );
+
       break;
     case 4:
       etapaComponent = (
@@ -210,7 +229,11 @@ const mudarConteudoTabela = (newList: any[]) => {
         {/* essa cor 'azulao' é uma cor específica que criei para se adequar ao protótipo */}
         <p className="text-azulao font-medium text-2xl">Sua ferramenta de conversão <strong className="text-roxao font-bold">OFX</strong> favorita</p>
 
-        {etapaComponent}
+        {isloading ? (
+          <Loading/>
+        ) : (
+          etapaComponent
+        )}
 
         <ConceitoOFX/>
 
