@@ -123,7 +123,7 @@ export function TerceiraEtapa({ etapa, file, voltarEtapa, avancarEtapa, conteudo
                 <div className={'flex flex-col items-center justify-center py-4 px-5 gap-3 rounded-xl border-[3px] w-1/2 bborder-solid border-blue-200 bg-sky-50'}>
 
                     tabelinha estatisticas
-                    <h2 className="text-azulao font-semibold text-xl">{file?.name}</h2>
+                    <h2 className="text-azulao font-semibold text-xl">{file?.name.split('.').slice(0, -1).join('.')}</h2>
                     <button onClick={() => baixarArquivo()} className='flex items-center gap-2 px-4 py-1.5 rounded-lg bg-roxao text-white font-semibold text-base hover:bg-purple-800'>Baixar arquivo <Download className="text-white size-4" /> </button>
 
                 </div>

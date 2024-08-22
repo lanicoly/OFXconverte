@@ -40,9 +40,9 @@ export function App() {
     if (file) {
         try {
            setisloading(true)
-           const arquivoconvertido = await EnviarArquivo(file);
+           const arquivoconvertido = await EnviarArquivo(file,contaUsuario,agenciaUsuario);
            setconteudotabela(arquivoconvertido)
-            console.log(arquivoconvertido); //retorno da api um json com todas as informaçoes contem as informaçoes para povoar a tabela
+            console.log(arquivoconvertido); 
         } catch (error) {
             console.error("Erro ao enviar o arquivo:", error);
         }
@@ -55,7 +55,7 @@ export function App() {
       const nomeSemExtensao = nome_pdf.split('.').slice(0, -1).join('.');
       console.log(nomeSemExtensao);
       try {
-        await baixarOFX(conteudotabela,nomeSemExtensao);
+        await baixarOFX(conteudotabela,nomeSemExtensao, agenciaUsuario, contaUsuario);
       } catch (error) {
         console.error("Erro ao baixar o arquivo:", error);
       }
