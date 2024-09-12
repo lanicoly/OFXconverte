@@ -1,48 +1,41 @@
-export async function EnviarArquivo(arquivo) {
+export async function EnviarArquivo(arquivo, conta, agencia) {
     if (!arquivo) return;
 
-    // Converte o arquivo para base64
     const reader = new FileReader();
     return new Promise((resolve, reject) => {
         reader.onloadend = async () => {
-            const base64File = reader.result.split(',')[1]; // Obtém a parte base64 do resultado
+            const base64File = reader.result.split(',')[1];
             const json = {
                 formato: arquivo.type,
-                token: 0, 
+                token: 0,
+                agencia: agencia,
+                conta: conta,
                 arquivo: base64File
             };
 
             try {
-                const response = await fetch('http://localhost:5000/ofx/converter', {
+                const response = await fetch('http://192.168.50.87:5000/ofx/converter', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json' // Envia o JSON
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(json)
                 });
 
                 if (!response.ok) {
-                    const errorText = await response.text(); 
+                    const errorText = await response.text();
                     throw new Error('ERR: ' + errorText);
                 }
 
                 const data = await response.json();
                 resolve(data);
             } catch (error) {
-                const respostaElement = document.getElementById('resposta');
-                if (respostaElement) {
-                    respostaElement.textContent = 'Erro: ' + error.message;
-                } else {
-                    console.error('Erro ao enviar o arquivo:', error.message);
-                }
                 reject(error);
             }
         };
         reader.readAsDataURL(arquivo);
     });
 }
-
-
 
 export async function atualizarJson(dadosJson, setDadosJson, indice, chave, valor) {
     const dadosAtualizados = [...dadosJson];
@@ -57,14 +50,21 @@ export async function deletarItem(dadosJson, setDadosJson, exibirPagina, configu
     configurarPaginacao();
 }
 
-export async function baixarOFX(dadosJson, nome_pdf) {
+export async function baixarOFX(dadosJson, nome_pdf, agencia, conta) {
     try {
-        const response = await fetch('http://localhost:5000/ofx/download', {
+        const json = {
+            token: 0,
+            agencia: agencia,
+            conta: conta,
+            arquivo: dadosJson
+        };
+
+        const response = await fetch('http://192.168.50.87:5000/ofx/download', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(dadosJson)
+            body: JSON.stringify(json)
         });
 
         if (!response.ok) {
@@ -79,6 +79,7 @@ export async function baixarOFX(dadosJson, nome_pdf) {
         document.body.appendChild(a);
         a.click();
         a.remove();
+        window.URL.revokeObjectURL(url); 
     } catch (error) {
         document.getElementById('resposta').textContent = 'Erro: ' + error.message;
     }
