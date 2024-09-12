@@ -1,14 +1,17 @@
 import { Trash2 } from "lucide-react";
-
 interface TabelaConversaoProps {
     currentItems: any,
     hoveredIndex: number | null,
-    setHoveredIndex: (index: number | null) => void
-    deleteItem: (index:number) => void
-
+    setHoveredIndex: (index: number | null) => void,
+    deleteItem: (index:number) => void,
+    formatarData: (data: string) => string
 }
 
-export function TabelaConversao ( {currentItems, hoveredIndex, deleteItem, setHoveredIndex} : TabelaConversaoProps) {
+
+export function TabelaConversao ( {currentItems, hoveredIndex, deleteItem, setHoveredIndex, formatarData} : TabelaConversaoProps) {
+    
+    
+
     return (
         <div className="relative w-full overflow-y-auto border-[3px] border-sky-200 max-h-[368px]">
             <table className="min-w-full divide-y divide-gray-200 ">
@@ -25,11 +28,11 @@ export function TabelaConversao ( {currentItems, hoveredIndex, deleteItem, setHo
                 <tbody className="bg-white divide-y divide-gray-200 overflow-y-auto max-h-[370px]">
                     {currentItems.map((transacao: any, index: number) => (
                         <tr
-                            key={index}
-                            onMouseEnter={() => setHoveredIndex(index)}
-                            onMouseLeave={() => setHoveredIndex(null)}
-                            className={` ${index === hoveredIndex ? 'bg-gray-100' : ''}`}                    >
-                            <td className="px-3 py-4 max-w-16 flex-wrap text-xs font-bold text-sky-800">{transacao.date}</td>
+                        key={index}
+                        onMouseEnter={() => setHoveredIndex(index)}
+                        onMouseLeave={() => setHoveredIndex(null)}
+                        className={` ${index === hoveredIndex ? 'bg-gray-100' : ''}`}                    >
+                            <td className="px-3 py-4 text-xs font-semibold text-sky-800">{formatarData(transacao.date)}</td>
                             <td className="px-3 py-4 max-w-16 flex-wrap text-xs text-azulao font-semibold">{transacao.type}</td>
                             <td className={`px-3 py-4 max-w-16 flex-wrap text-xs ${transacao.amount > 0 ? 'text-azulao' : 'text-rose-800'}  font-semibold`}>{transacao.amount}</td>
                             <td className="px-3 py-4 max-w-16 flex-wrap text-xs font-semibold">{transacao.FITID}</td>

@@ -139,6 +139,14 @@ const mudarConteudoTabela = (newList: any[]) => {
     setIsIconeHover(false);
   }
 
+  let nomeArquivo:string = ''
+  let nomePDF = file?.name
+  if (nomePDF) {
+    nomeArquivo = nomePDF
+  }
+
+
+
   // essa variável foi criada para que os componentes das etapas sejam exibidos conforme a etapa atual e não se houver file ou não (como era anteriormente nos primeiros testes)
   let etapaComponent;
   switch (etapa) {
@@ -188,7 +196,7 @@ const mudarConteudoTabela = (newList: any[]) => {
         conteudotabela={conteudotabela}
         downloadarquivo={DownloadArquivo}
         mudarConteudoTabela={mudarConteudoTabela}
-
+        nomeArquivo={nomeArquivo}
         />
       );
 
