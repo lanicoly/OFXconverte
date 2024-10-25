@@ -9,6 +9,7 @@ import { EnviarArquivo, baixarOFX } from "./service.jsx";
 import { ConceitoOFX } from "./componentes/conceitoOFX.js";
 import { TutorialConversao } from "./componentes/tutorialConversao";
 import { Loading } from "./componentes/loading.js";
+import {AdSenseDisplay} from "./ads/display.jsx"
 
 
 
@@ -38,16 +39,27 @@ export function App() {
 
   const ConverterArquivo = async () => {
     if (file) {
-        try {
-           setisloading(true)
-           const arquivoconvertido = await EnviarArquivo(file,contaUsuario,agenciaUsuario);
-           setconteudotabela(arquivoconvertido)
-            console.log(arquivoconvertido); 
-        } catch (error) {
-            console.error("Erro ao enviar o arquivo:", error);
+      try {
+        setisloading(true);
+        const arquivoconvertido = await EnviarArquivo(file, contaUsuario, agenciaUsuario);
+  
+        if (!arquivoconvertido || arquivoconvertido.length < 1) {
+          alert("Erro: o arquivo não pôde ser convertido. Clique em OK para voltar à primeira etapa.");
+          selecionarEtapa(1);
+        } else {
+          setconteudotabela(arquivoconvertido);
         }
+      } catch (error) {
+        console.error("Erro ao enviar o arquivo:", error);
+        alert("Erro ao processar a solicitação. Por favor, tente novamente.");
+        selecionarEtapa(1);
+      } finally {
+        setisloading(false);
+      }
     }
-};
+  };
+  
+  
 
   const DownloadArquivo =  async  ()=>{
     let nome_pdf = file?.name;
@@ -242,10 +254,14 @@ const mudarConteudoTabela = (newList: any[]) => {
         ) : (
           etapaComponent
         )}
-
+        
         <ConceitoOFX/>
+       <AdSenseDisplay/>
+
+
 
         <TutorialConversao/>
+        
       
       </div>
       {/* fim main */}

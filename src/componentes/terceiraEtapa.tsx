@@ -13,35 +13,38 @@ interface TerceiraEtapaProps {
     conteudotabela: any,
     downloadarquivo: () => void,
     mudarConteudoTabela: (newList: any[]) => void
-
 }
 
 export function TerceiraEtapa({ etapa, file, nomeArquivo, voltarEtapa, avancarEtapa, conteudotabela, downloadarquivo, mudarConteudoTabela }: TerceiraEtapaProps) {
 
-    //como são muitas variáveis e funções para passar, deixei aqui por enquanto
-
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(1);
+    const [filtroDescricao, setFiltroDescricao] = useState<string>(""); // Filtro de transações
     const itemsPerPage = 20;
-    const totalPages = Math.ceil(conteudotabela.length / itemsPerPage);
+
+    // Filtrando as transações com base no filtro de descrição
+    const transacoesFiltradas = conteudotabela.filter((transacao: any) =>
+        transacao.description.toLowerCase().includes(filtroDescricao.toLowerCase())
+    );
+
+    const totalPages = Math.ceil(transacoesFiltradas.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    const currentItems = conteudotabela.slice(startIndex, endIndex);
-    const totalTransacoes = conteudotabela.length;
+    const currentItems = transacoesFiltradas.slice(startIndex, endIndex);
+    const totalTransacoes = transacoesFiltradas.length;
     const [qtdCredito, setQtdCredito] = useState<number>(0);
     const [qtdDebito, setQtdDebito] = useState<number>(0);
     const [saldoFinal, setSaldoFinal] = useState<number>(0);
     const [maiorCredito, setMaiorCredito] = useState<{ valor: number; descricao: string; data: string } | null>(null);
 
-    const percentCredito = ((qtdCredito*100)/totalTransacoes).toFixed(2);
-    const percentDebito = ((qtdDebito*100)/totalTransacoes).toFixed(2);
-    
+    const percentCredito = ((qtdCredito * 100) / totalTransacoes).toFixed(2);
+    const percentDebito = ((qtdDebito * 100) / totalTransacoes).toFixed(2);
+
     const nomeSemExtensao: string = nomeArquivo.split('.').slice(0, -1).join('.');
     const novoNomeArquivo: string = `${nomeSemExtensao}.ofx`;
-    
 
-    function formatarNumero (numero: number) {
-        if (isNaN(numero)) return 'R$ 0.00'; // por estar ocorrendo erro de NaN, decidi verificar
+    function formatarNumero(numero: number) {
+        if (isNaN(numero)) return 'R$ 0.00';
         if (numero >= 1_000_000) {
             return `R$ ${(numero / 1_000_000).toFixed(1).replace(/\.0$/, '')} MI`;
         } else if (numero >= 1_000) {
@@ -50,6 +53,7 @@ export function TerceiraEtapa({ etapa, file, nomeArquivo, voltarEtapa, avancarEt
             return `R$ ${numero.toFixed(2)}`;
         }
     };
+
     const formatarData = (data: string): string => {
         if (typeof data !== 'string' || data.length !== 8) {
             console.error(`Formato de data inválido: ${data}`);
@@ -62,19 +66,17 @@ export function TerceiraEtapa({ etapa, file, nomeArquivo, voltarEtapa, avancarEt
     
         return `${dia}-${mes}-${ano}`;
     };
-    
-    
-    
+
     useEffect(() => {
         let creditos = 0;
         let debitos = 0;
         let valorTotal = 0;
         let maiorCreditoTemp: { valor: number; descricao: string; data: string } | null = null;
     
-        conteudotabela.forEach((transacao: { type: string; amount: string; description: string; date: string }) => {
-            const amount = parseFloat(transacao.amount); // convertendo o valor da transação de string pra numero
+        transacoesFiltradas.forEach((transacao: { type: string; amount: string; description: string; date: string }) => {
+            const amount = parseFloat(transacao.amount);
     
-            if (!isNaN(amount)) { 
+            if (!isNaN(amount)) {
                 if (transacao.type === 'C') {
                     creditos += 1;
                     valorTotal += amount;
@@ -98,9 +100,8 @@ export function TerceiraEtapa({ etapa, file, nomeArquivo, voltarEtapa, avancarEt
         setQtdDebito(debitos);
         setSaldoFinal(valorTotal);
         setMaiorCredito(maiorCreditoTemp);
-    }, [conteudotabela]);
-    
-    
+    }, [transacoesFiltradas]);
+
     function paginaInicio() {
         setCurrentPage(1);
     }
@@ -108,7 +109,6 @@ export function TerceiraEtapa({ etapa, file, nomeArquivo, voltarEtapa, avancarEt
     function voltarPagina() {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);
-
         }
     }
 
@@ -122,28 +122,23 @@ export function TerceiraEtapa({ etapa, file, nomeArquivo, voltarEtapa, avancarEt
         setCurrentPage(totalPages);
     }
 
-
     function deleteItem(index: number) {
-        const itemIndex = startIndex + index; //index absoluto do item em si que será excluido
+        const itemIndex = startIndex + index;
 
-        // cria uma nova lista excluindo o item do index passado
         const newItems = [
             ...conteudotabela.slice(0, itemIndex),
             ...conteudotabela.slice(itemIndex + 1)
         ];
 
-        //atualiza o conteudo direto do componente pai
         mudarConteudoTabela(newItems);
 
-        // se for necessário, atualiza a página atual
         const newTotalPages = Math.ceil(newItems.length / itemsPerPage);
         setCurrentPage(Math.min(currentPage, newTotalPages));
     }
 
     async function baixarArquivo() {
-        await downloadarquivo()
-        avancarEtapa(etapa)
-
+        await downloadarquivo();
+        avancarEtapa(etapa);
     }
 
     return (
@@ -153,11 +148,7 @@ export function TerceiraEtapa({ etapa, file, nomeArquivo, voltarEtapa, avancarEt
             <div className="w-full space-y-3 px-2.5 py-2.5">
 
                 {/* passo a passo */}
-                <PassoAPasso
-                    etapa={etapa}
-                />
-                {/* fim passo a passo */}
-
+                <PassoAPasso etapa={etapa} />
                 <p className='text-azulao text-xl font-medium'>Visualize e baixe seu arquivo convertido</p>
 
                 <div className="flex justify-center items-center gap-2">
@@ -165,13 +156,21 @@ export function TerceiraEtapa({ etapa, file, nomeArquivo, voltarEtapa, avancarEt
                     <p className='text-roxao text-base font-medium'>Confira abaixo a primeira e última linhas do OFX para garantir uma conversão efetiva</p>
                 </div>
 
+                {/* Barra de filtro */}
+                <div className="my-4">
+                    <input 
+                        type="text" 
+                        placeholder="Filtrar por descrição" 
+                        className="border border-azul-logo rounded-md p-2 w-full"
+                        value={filtroDescricao}
+                        onChange={(e) => setFiltroDescricao(e.target.value)}
+                    />
+                </div>
             </div>
-            {/* fim cabeçalho da área de conversão */}
 
             {/* conteudo central visualização + estatística e download */}
             <div className="flex gap-4 py-6 px-6">
 
-                {/* parte de visualização do arquivo já convertido*/}
                 <div className={"w-full flex flex-col items-center justify-center py-3 px-3 gap-1 rounded-xl border-[3px] border-solid border-blue-200 bg-sky-50"}>
                     
                     <TabelaConversao
@@ -190,11 +189,8 @@ export function TerceiraEtapa({ etapa, file, nomeArquivo, voltarEtapa, avancarEt
                         currentPage={currentPage}
                         totalPages={totalPages}
                     />
-
                 </div>
-                {/* fim parte de visualização de arquivo já convertido*/}
 
-                {/* parte de estatística e download*/}
                 <div className={'flex flex-col items-center justify-center py-4 px-5 gap-3 rounded-xl border-[3px] w-1/2 bborder-solid border-blue-200 bg-sky-50'}>
 
                     <h2 className="text-azulao font-semibold text-xl">{novoNomeArquivo}</h2>
@@ -270,8 +266,7 @@ export function TerceiraEtapa({ etapa, file, nomeArquivo, voltarEtapa, avancarEt
                 <button onClick={() => avancarEtapa(etapa)} className='flex items-center gap-2 px-4 py-1.5 rounded-lg bg-roxao text-white font-semibold text-base hover:bg-purple-800'>Concluir <MoveRight className="text-white size-4" /> </button>
             </div>
             {/* fim botões de voltar e concluir*/}
-
-        </div> //fim área de conversão
-
+        </div>
+       
     )
 }

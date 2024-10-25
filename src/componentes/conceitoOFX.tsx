@@ -2,7 +2,7 @@
 
 export function ConceitoOFX () {
     return (
-        <div className="flex items-center flex-col justify-center gap-3">
+        <div className="flex items-center flex-col justify-center gap-3" id = 'conceito-ofx'>
             <h1 className="font-semibold text-3xl mt-4">O QUE É EXTRATO <strong className="text-roxao font-bold">OFX</strong>?</h1>
 
              <div className="flex mx-80 mt-4 ">

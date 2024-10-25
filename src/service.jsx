@@ -14,7 +14,7 @@ export async function EnviarArquivo(arquivo, conta, agencia) {
             };
 
             try {
-                const response = await fetch('http://192.168.50.87:5000/ofx/converter', {
+                const response = await fetch('http://192.168.50.155:3002/ofx/converter', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -59,7 +59,7 @@ export async function baixarOFX(dadosJson, nome_pdf, agencia, conta) {
             arquivo: dadosJson
         };
 
-        const response = await fetch('http://192.168.50.87:5000/ofx/download', {
+        const response = await fetch('http://192.168.50.155:3002/ofx/download', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

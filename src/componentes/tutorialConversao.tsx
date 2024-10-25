@@ -4,7 +4,7 @@ import { FileSave } from "./icons/fileSave";
 
 export function TutorialConversao () {
     return (
-        <div className='bg-white w-[1040px] m-auto rounded-xl py-6 px-6 gap-6 shadow-shape'>
+        <div className='bg-white w-[1040px] m-auto rounded-xl py-6 px-6 gap-6 shadow-shape' id = 'tutorial'>
         <h1 className="font-semibold text-3xl my-3">TUTORIAL DE CONVERSÃO <strong className="text-roxao font-bold">OFX</strong></h1>
         <div className=" flex-wrap flex my-6 justify-center gap-7">
           

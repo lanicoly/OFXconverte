@@ -32,7 +32,7 @@ export function SegundaEtapa ({ file, etapa, dropzone, isIconeHover,finalizarLoa
 
     const conversaoarquiv = async () =>{
           await functionconverter()
-          console.log("Conversao concluida!")
+          
           finalizarLoading()
           inserirAgencia(agencia)
           inserirConta(conta)
